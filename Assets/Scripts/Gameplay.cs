@@ -10,6 +10,7 @@ public class Gameplay : MonoBehaviour
     public TextMeshProUGUI currentPlayer;
     public TextMeshProUGUI gameState;
     public TextMeshProUGUI gameLog;
+    public TextMeshProUGUI endgameLog;
 
     [Header("Input")]
     public TMP_InputField guessInputField;
@@ -48,12 +49,7 @@ public class Gameplay : MonoBehaviour
         }
         if (guess < minNumber || guess > maxNumber)
         {
-            gameState.text = $"YO! ENTER A NUMBER ONLY! {minNumber} - {maxNumber} !!"; 
-            return;
-        }
-        else if (guess > minNumber || guess < maxNumber)
-        {
-            gameState.text = "Good!";
+            gameState.text = $"YO! ENTER A NUMBER \nONLY! {minNumber} - {maxNumber} !!"; 
             return;
         }
         ProcessGuess(guess, true);
@@ -70,23 +66,25 @@ public class Gameplay : MonoBehaviour
         if (guess == targetNumber)
         {
             //WIN
-            gameLog.text += $"{playerName} got it right (^oᴥo^)\n";
+            endgameLog.text += $"{playerName} got it right (^oᴥo^)\n";
             EndGame();
         }
         else if (currentAttemps >= maxAttempts)
         {
-            gameLog.text += $"HaHa! you Noop! the correct number was {targetNumber}. l(¯3¯)l \n";
+            endgameLog.text += $"HaHa! you Noop! the correct number was {targetNumber}. l(¯3¯)l \n";
             EndGame();
         }
         else
         {
+            gameState.text = "Good!";
+
             //Wrong guess - give hint
             string hint = guess < targetNumber ? "Too Low!" : "Too High!";
             gameLog.text += $"{hint} nearby!\n";
 
             //Switch players
             isPlayerTurn = !isPlayerTurn;
-            currentPlayer.text = isPlayerTurn ? "Player" : "Computer";
+            currentPlayer.text = isPlayerTurn ? "Player Turn" : "<color=black>Computer Turn</color>";
             attempsLeft.text = $"Attempts Left: {maxAttempts - currentAttemps}";
 
             if (!isPlayerTurn)
@@ -107,7 +105,7 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator ComputerTurn(bool targetISHigher)
     {
-        yield return new WaitForSeconds(1f); // Wait to simulate thinking
+        yield return new WaitForSeconds(2f); // Wait to simulate thinking
         if(!GameActive) yield break;
         int computerGuess = Random.Range(minNumber, maxNumber + 1);
         ProcessGuess(computerGuess, false);
@@ -118,8 +116,7 @@ public class Gameplay : MonoBehaviour
         GameActive = false;
         guessInputField.interactable = false;
         submitButton.interactable = false;
-        currentPlayer.text = "";
-        gameState.text = "Press Click New Game to play again! (//O_O//)";
+        gameState.text = "Press Click New Game \nto play again! (//O_O//)";
         Canvas.ForceUpdateCanvases();
         currentPlayer.text = "EndGame";
         attempsLeft.text = "Attempts Left: 0";
@@ -136,7 +133,8 @@ public class Gameplay : MonoBehaviour
         currentPlayer.text = "Player Turn";
         attempsLeft.text = $"Attempts Left: {maxAttempts}";
         gameLog.text = "";
-        gameState.text = "New game started! Player goes first!(>O<)";
+        endgameLog.text = "";
+        gameState.text = "New game started! \nPlayer goes first!(>O<)";
 
         guessInputField.interactable = true;
         submitButton.interactable = true;
