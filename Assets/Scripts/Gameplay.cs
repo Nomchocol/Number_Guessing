@@ -44,12 +44,12 @@ public class Gameplay : MonoBehaviour
         int guess;
         if (!int.TryParse(input, out guess))
         {
-            gameState.text = "it not Number bro ;(";
+            gameState.text = "it not Number bro <color=white>;(</color>";
             return;
         }
         if (guess < minNumber || guess > maxNumber)
         {
-            gameState.text = $"YO! ENTER A NUMBER \nONLY! {minNumber} - {maxNumber} !!"; 
+            gameState.text = $"YO! ENTER A NUMBER \nONLY! <color=white>{minNumber} - {maxNumber}</color> !!"; 
             return;
         }
         ProcessGuess(guess, true);
@@ -59,19 +59,19 @@ public class Gameplay : MonoBehaviour
     void ProcessGuess(int guess, bool isPlayerTurn)
     {
         currentAttemps++;
-        string playerName = isPlayerTurn ? "Player" : "Computer";
+        string playerName = isPlayerTurn ? "<color=green>Player</color>" : "<color=red>Computer</color>";
 
-        gameLog.text += $"{playerName} guessed: {guess}\n";
+        gameLog.text += $"{playerName} guessed: <color=white>{guess}</color>\n";
 
         if (guess == targetNumber)
         {
             //WIN
-            endgameLog.text += $"{playerName} got it right (^oᴥo^)\n";
+            endgameLog.text += $"{playerName} <color=white>WIN!</color> that right! <color=white>(^oᴥo^)</color>\n";
             EndGame();
         }
         else if (currentAttemps >= maxAttempts)
         {
-            endgameLog.text += $"HaHa! you Noop! the correct number was {targetNumber}. l(¯3¯)l \n";
+            endgameLog.text += $"HaHa! you Noop! the correct number was <color=white>{targetNumber}</color> l(¯3¯)l \n";
             EndGame();
         }
         else
@@ -79,13 +79,13 @@ public class Gameplay : MonoBehaviour
             gameState.text = "Good!";
 
             //Wrong guess - give hint
-            string hint = guess < targetNumber ? "Too Low!" : "Too High!";
+            string hint = guess < targetNumber ? "<color=white>Too Low!</color>" : "<color=white>Too High!</color>";
             gameLog.text += $"{hint} nearby!\n";
 
             //Switch players
             isPlayerTurn = !isPlayerTurn;
-            currentPlayer.text = isPlayerTurn ? "Player Turn" : "<color=black>Computer Turn</color>";
-            attempsLeft.text = $"Attempts Left: {maxAttempts - currentAttemps}";
+            currentPlayer.text = isPlayerTurn ? "<color=green>Player Turn</color>" : "<color=red>Computer Turn</color>";
+            attempsLeft.text = $"Attempts Left: <color=white>{maxAttempts - currentAttemps}</color>";
 
             if (!isPlayerTurn)
             {
@@ -116,10 +116,10 @@ public class Gameplay : MonoBehaviour
         GameActive = false;
         guessInputField.interactable = false;
         submitButton.interactable = false;
-        gameState.text = "Press Click New Game \nto play again! (//O_O//)";
+        gameState.text = "Press Click New Game \nto play again! <color=white>(//O_O//)</color>";
         Canvas.ForceUpdateCanvases();
         currentPlayer.text = "EndGame";
-        attempsLeft.text = "Attempts Left: 0";
+        attempsLeft.text = "Attempts Left: <color=white>0</color>";
     }
 
 
@@ -130,11 +130,11 @@ public class Gameplay : MonoBehaviour
         isPlayerTurn = true;
         GameActive = true;
 
-        currentPlayer.text = "Player Turn";
-        attempsLeft.text = $"Attempts Left: {maxAttempts}";
+        currentPlayer.text = "<color=green>Player Turn</color>";
+        attempsLeft.text = $"Attempts Left: <color=white>{maxAttempts}</color>";
         gameLog.text = "";
         endgameLog.text = "";
-        gameState.text = "New game started! \nPlayer goes first!(>O<)";
+        gameState.text = "New game started! \nPlayer goes first! <color=white>(>O<)</color>";
 
         guessInputField.interactable = true;
         submitButton.interactable = true;
