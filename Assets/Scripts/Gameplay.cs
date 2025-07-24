@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Gameplay : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class Gameplay : MonoBehaviour
     private bool isPlayerTurn;
     private bool GameActive;
 
+    private int computerMinGuess;
+    private int computerMaxGuess;
+    private List<int> computerGuesses;
+
     void InitializeUI()
     {
         submitButton.onClick.AddListener(SubmitGuess);
@@ -44,12 +49,12 @@ public class Gameplay : MonoBehaviour
         int guess;
         if (!int.TryParse(input, out guess))
         {
-            gameState.text = "it not Number bro <color=white>;(</color>";
+            gameState.text = "it not Number bro <sprite=15>";
             return;
         }
         if (guess < minNumber || guess > maxNumber)
         {
-            gameState.text = $"YO! ENTER A NUMBER \nONLY! <color=white>{minNumber} - {maxNumber}</color> !!"; 
+            gameState.text = $"YO! ENTER A NUMBER \nONLY! <color=white>{minNumber} - {maxNumber}</color> <sprite=10>!!"; 
             return;
         }
         ProcessGuess(guess, true);
@@ -66,12 +71,12 @@ public class Gameplay : MonoBehaviour
         if (guess == targetNumber)
         {
             //WIN
-            endgameLog.text += $"{playerName} <color=white>WIN!</color> that right! <color=white>(^oᴥo^)</color>\n";
+            endgameLog.text += $"<sprite=\"Symbols\" index=23> {playerName} <color=white>WIN!</color> that right! <color=white>(^oᴥo^)</color>\n";
             EndGame();
         }
         else if (currentAttemps >= maxAttempts)
         {
-            endgameLog.text += $"HaHa! you Noop! the correct number was <color=white>{targetNumber}</color> l(¯3¯)l \n";
+            endgameLog.text += $"<sprite=\"Symbols\" index=24>HaHa! you Noop! the correct number was <color=white>{targetNumber}</color> l(¯3¯)l \n";
             EndGame();
         }
         else
@@ -79,7 +84,7 @@ public class Gameplay : MonoBehaviour
             gameState.text = "Good!";
 
             //Wrong guess - give hint
-            string hint = guess < targetNumber ? "<color=white>Too Low!</color>" : "<color=white>Too High!</color>";
+            string hint = guess < targetNumber ? "<sprite=\"Symbols\" index=24><color=white>Too Low!</color>" : "<sprite=\"Symbols\" index=24><color=white>Too High!</color>";
             gameLog.text += $"{hint} nearby!\n";
 
             //Switch players
@@ -107,7 +112,25 @@ public class Gameplay : MonoBehaviour
     {
         yield return new WaitForSeconds(2f); // Wait to simulate thinking
         if(!GameActive) yield break;
-        int computerGuess = Random.Range(minNumber, maxNumber + 1);
+        if (computerGuesses.Count > 0)
+        {
+            int lastGuess = computerGuesses[computerGuesses.Count - 1];
+            if (targetISHigher)
+            {
+                computerMinGuess = lastGuess + 1;
+            }
+            else
+            {
+                computerMaxGuess = lastGuess - 1;
+            }
+        }
+        // AI uses Binary Search strategy
+        int computerGuess = (computerMinGuess + computerMaxGuess) / 2;
+
+        computerGuesses.Add(computerGuess);
+
+
+        //int computerGuess = Random.Range(minNumber, maxNumber + 1);
         ProcessGuess(computerGuess, false);
     }
 
@@ -141,6 +164,10 @@ public class Gameplay : MonoBehaviour
         guessInputField.text = "";
         guessInputField.Select();
         guessInputField.ActivateInputField();
+
+        computerMinGuess = minNumber;
+        computerMaxGuess = maxNumber;
+        computerGuesses = new List<int>();
     }
 
     void Start()
